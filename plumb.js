@@ -27,18 +27,20 @@
 
   var interpret;
 
-  var call = curry(function call_(env, f, arg) {
-                     return op(f, interpret(env, arg));
+  var icall = curry(function icall_(env, f, arg) {
+console.log({'in': 'icall', 'env':env, 'f':f,'arg':arg});
+                     return f(interpret(env, arg));
                    });
 
   var chain = curry(function chain_(env, calls) {
-                      return calls.reduce(call(env),
+console.log({'in': 'chain', 'env': env, 'calls': calls});
+                      return calls.reduce(icall(env),
                                           function(x) { return x; });
                     });
 
   var plumb = curry(function plumb_(env, expr, arg) {
-                      return expr? chain([arg].concat(env), expr)
-                                 : arg;
+                      return expr.length? chain([arg].concat(env), expr)
+                                        : arg;
                     });
 
   function is_array(x) {

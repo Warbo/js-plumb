@@ -13,7 +13,7 @@ function failures(o) {
                        var result = o[k].apply(null, args(o[k].length));
                        if (result) fails[k] = result;
                      });
-  return fails;
+  return Object.keys(fails).length? fails : 'All tests passed';
 }
 
 console.log(failures({
@@ -26,8 +26,21 @@ console.log(failures({
                     z <= 1000)? 0 : {'x': x, 'y': y, 'z': z};
           },
 
-  'id': function(x) {
-          var lhs = plumb([], x);
-          return (lhs === x)? 0 : {'lhs': lhs, 'rhs': x};
-        }
+  'id': function(rhs) {
+          var lhs = plumb([], rhs);
+          return (lhs === rhs)? 0 : {'lhs': lhs, 'rhs': rhs};
+        },
+
+  'id2': function(rhs) {
+           var lhs = plumb([0], rhs);
+           return (lhs === rhs)? 0 : {'lhs': lhs, 'rhs': rhs};
+         },
+
+  'plumb uncurries': function(x, y) {
+                       var lhs = plumb([[function(a, b) { return a + b; }]],
+                                       x, y);
+                       return (lhs === x + y)? 0 : {'lhs': lhs, 'rhs': x + y,
+                                                    'x': x, 'y': y};
+                     }
+
 }));
