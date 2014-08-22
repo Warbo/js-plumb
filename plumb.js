@@ -1,13 +1,12 @@
-var plumb, __;
+(function(exports) {
 
-(function() {
   function as_array(x) { return Array.prototype.slice.call(x, 0); }
 
-  __ = function __() {
-         var args = as_array(arguments);
-         args.grouped = true;
-         return args;
-       };
+  exports._ = function __() {
+                var args = as_array(arguments);
+                args.grouped = true;
+                return args;
+              };
 
   function call(f, x) { return f(x); }
 
@@ -38,7 +37,7 @@ var plumb, __;
                     });
 
   var plumb = curry(function plumb_(env, expr, arg) {
-                      return expr? chain(array_merge([arg], env), expr)
+                      return expr? chain([arg].concat(env), expr)
                                  : arg;
                     });
 
@@ -54,5 +53,6 @@ var plumb, __;
                       return x;
                     });
 
-  return plumb([]);
-}());
+  exports.plumb = plumb([]);
+
+})(typeof exports === 'undefined'? this['mymodule']={}: exports);
