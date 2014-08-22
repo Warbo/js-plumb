@@ -36,11 +36,19 @@ console.log(failures({
            return (lhs === rhs)? 0 : {'lhs': lhs, 'rhs': rhs};
          },
 
-  'plumb uncurries': function(x, y) {
-                       var lhs = plumb([[function(a, b) { return a + b; }]],
-                                       x, y);
-                       return (lhs === x + y)? 0 : {'lhs': lhs, 'rhs': x + y,
-                                                    'x': x, 'y': y};
-                     }
+  'plumb uncurries': function(x) {
+                       var id  = plumb([]);
+                       var lhs = plumb([id , 0], x);
+                       return (lhs === x)? 0 : {'lhs': lhs, 'rhs': x};
+                     },
 
+  'group syntax works': function(x) {
+                          function p(a, b) { return a + b; };
+                          function m(a, b) { return a * b; };
+                          var lhs = plumb([p , 0 , _(m , 0 , 0)], x);
+                          var rhs = x + (x * x);
+                          return (lhs === rhs)? 0 : {'lhs': lhs,
+                                                     'rhs': rhs,
+                                                     'x':   x};
+                        }
 }));

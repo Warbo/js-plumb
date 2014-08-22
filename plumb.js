@@ -12,6 +12,7 @@
 
   function curry_(args, n, f) {
     return (args.length < n)? function curried() {
+//console.log({'in': 'curried', 'args': args, 'n': n, 'args2': as_array(arguments)});
                                 return curry_(args.concat(as_array(arguments)),
                                               n,
                                               f);
@@ -28,14 +29,15 @@
   var interpret;
 
   var icall = curry(function icall_(env, f, arg) {
-console.log({'in': 'icall', 'env':env, 'f':f,'arg':arg});
+//console.log({'in': 'icall', 'env':env, 'f':f,'arg':arg});
                      return f(interpret(env, arg));
                    });
 
   var chain = curry(function chain_(env, calls) {
-console.log({'in': 'chain', 'env': env, 'calls': calls});
-                      return calls.reduce(icall(env),
-                                          function(x) { return x; });
+//console.log({'in': 'chain', 'env': env, 'calls': calls});
+                      return calls.reduce(
+                               function(f, x) { return icall(env, f, x); },
+                               function(x)    { return x; });
                     });
 
   var plumb = curry(function plumb_(env, expr, arg) {
