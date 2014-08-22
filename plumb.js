@@ -1,18 +1,13 @@
 (function(exports) {
 
-  function as_array(x) { return Array.prototype.slice.call(x, 0); }
+  // Helper functions
 
-  exports._ = function __() {
-                var args = as_array(arguments);
-                args.grouped = true;
-                return args;
-              };
+  function as_array(x) { return Array.prototype.slice.call(x, 0); }
 
   function call(f, x) { return f(x); }
 
   function curry_(args, n, f) {
     return (args.length < n)? function curried() {
-//console.log({'in': 'curried', 'args': args, 'n': n, 'args2': as_array(arguments)});
                                 return curry_(args.concat(as_array(arguments)),
                                               n,
                                               f);
@@ -26,15 +21,15 @@
                               return curry_([], f.length, f);
                             });
 
+  // Plumb
+
   var interpret;
 
   var icall = curry(function icall_(env, f, arg) {
-//console.log({'in': 'icall', 'env':env, 'f':f,'arg':arg});
-                     return f(interpret(env, arg));
+                     return curry(f, interpret(env, arg));
                    });
 
   var chain = curry(function chain_(env, calls) {
-//console.log({'in': 'chain', 'env': env, 'calls': calls});
                       return calls.reduce(
                                function(f, x) { return icall(env, f, x); },
                                function(x)    { return x; });
@@ -59,4 +54,12 @@
 
   exports.plumb = plumb([]);
 
-})(typeof exports === 'undefined'? this['mymodule']={}: exports);
+  exports._ = function __() {
+                var args = as_array(arguments);
+                args.grouped = true;
+                return args;
+              };
+
+// If 'exports' is defined, we're in a CommonJS module (eg. in Node.js),
+// otherwise we're in a browser so define a 'plumb' object
+})(typeof exports === 'undefined'? this['plumb']={} : exports);
